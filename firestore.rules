@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isShopkeeper() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'shopkeeper';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Vendors collection
+    match /vendors/{vendorId} {
+      allow read: if true; // Anyone can read vendors (for customer browsing)
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && 
+                       (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Products collection
+    match /products/{productId} {
+      allow read: if true; // Anyone can read products (for customer browsing)
+      allow create: if isShopkeeper();
+      allow update: if isSignedIn() && 
+                       (resource.data.vendorId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.shopId || isAdmin());
+      allow delete: if isSignedIn() && 
+                       (resource.data.vendorId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.shopId || isAdmin());
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+    
+    // Pending verifications
+    match /pending_verifications/{verificationId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

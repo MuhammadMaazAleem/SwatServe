@@ -1,0 +1,22 @@
+# SwatServe
+
+Shamozai ki Pehli Delivery Service - A modern food and grocery delivery app for Swat Valley.
+
+## Quick Start
+
+1. Install dependencies:
+   ```
+   flutter pub get
+   ```
+
+2. Configure Firebase:
+   ```
+   flutterfire configure
+   ```
+
+3. Run the app:
+   ```
+   flutter run
+   ```
+
+For detailed setup instructions, see README.md
