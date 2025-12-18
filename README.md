@@ -213,13 +213,7 @@ lib/
 2. **Shopkeeper**: Open the app → Sign Up → Select "Shopkeeper" → Fill details + License Number → Wait for admin verification
 3. **Admin**: Create as customer first, then manually change role in Firestore
 
-### Default Test Credentials
 
-You'll need to create your own accounts. Recommended test accounts:
-
-- **Admin**: admin@swatserve.com / password123
-- **Shopkeeper**: shop1@swatserve.com / password123
-- **Customer**: customer@swatserve.com / password123
 
 ## 🎨 Customization
 
